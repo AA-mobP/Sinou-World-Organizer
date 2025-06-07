@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منظم عالم الرواية التفاعلي</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            margin: 20px;
+            padding: 30px;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .section-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .section-header .toggle-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+        
+        .section-header.collapsed .toggle-icon {
+            transform: translateY(-50%) rotate(-90deg);
+        }
+        
+        .subsection {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            margin: 15px 0;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .subsection:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .subsection-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .subsection-header:hover {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+        }
+        
+        .subsection-header h4 {
+            margin: 0;
+            color: #495057;
+            font-weight: 500;
+        }
+        
+        .detail-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .detail-item:hover {
+            background: #e9ecef;
+            border-left-color: #764ba2;
+        }
+        
+        .add-button {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .add-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .edit-button {
+            background: linear-gradient(45deg, #17a2b8, #007bff);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        
+        .edit-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .delete-button {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            margin-left: 5px;
+        }
+        
+        .delete-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .input-group {
+            margin: 10px 0;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+        
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .collapse-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .collapse-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .search-container {
+            margin-bottom: 30px;
+        }
+        
+        .search-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            background: white;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #17a2b8, #007bff);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .export-button {
+            background: linear-gradient(45deg, #6f42c1, #e83e8c);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .export-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center mb-4">
+                        <h1 class="display-4 text-primary mb-3">
+                            <i class="fas fa-book-open"></i>
+                            منظم عالم الرواية التفاعلي
+                        </h1>
+                        <p class="lead text-muted">نظام تفاعلي لتنظيم وإدارة عناصر الرواية</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- شريط الأدوات -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="form-control search-input" placeholder="البحث في محتوى الرواية...">
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="export-button" onclick="exportData()">
+                        <i class="fas fa-download"></i> تصدير البيانات
+                    </button>
+                    <button class="export-button" onclick="importData()">
+                        <i class="fas fa-upload"></i> استيراد البيانات
+                    </button>
+                </div>
+            </div>
+            
+            <!-- إحصائيات سريعة -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h3 id="totalSections">0</h3>
+                        <p>الأقسام الرئيسية</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h3 id="totalSubsections">0</h3>
+                        <p>الأقسام الفرعية</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h3 id="totalItems">0</h3>
+                        <p>إجمالي العناصر</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h3 id="lastModified">اليوم</h3>
+                        <p>آخر تحديث</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- محتوى الرواية -->
+            <div id="worldContent"></div>
+            
+            <!-- زر إضافة قسم جديد -->
+            <div class="text-center mt-4">
+                <button class="add-button" onclick="addNewSection()">
+                    <i class="fas fa-plus"></i> إضافة قسم رئيسي جديد
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal لإضافة/تعديل العناصر -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">تعديل العنصر</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">النص:</label>
+                        <textarea id="editText" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEdit()">حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Input للاستيراد -->
+    <input type="file" id="importFile" accept=".json" style="display: none;">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // بيانات عالم الرواية
+        let worldData = {
+            "الخلفية الكونية والعالم": {
+                "التغييرات الكونية الكبرى": [
+                    "الحقبة الأولى: العالم كما نعرفه",
+                    "الحقبة الثانية: الفوضى، حرب نووية، تشوهات كهرومغناطيسية",
+                    "الحقبة الثالثة: شعاع من الطاقة المظلمة يضرب النظام الشمسي",
+                    "الكيانات العليا تخلط طاقتها ببصمتها الذاتية",
+                    "الطاقات الجديدة تؤثر في البنية الجينية وتخلق طفرات",
+                    "تنتج مجتمعات جديدة، صراعات، طبقية، وتمييز عرقي/طاقي"
+                ],
+                "خصائص العالم": [
+                    "العالم متغير (إما نسخة مغايرة من عالمنا أو عالم خيالي جديد)",
+                    "هناك أبعاد فرعية/زنزانات تجذب الأفراد في سن معين",
+                    "البشر يملكون قدرة فريدة على احتواء أنواع متعددة من الطاقات"
+                ]
+            },
+            "نظام القوة": {
+                "المسارات الأساسية": [
+                    "مسار الدمى: دمية → جسد الدمية → محرك → صانع → سيد → قفص → مسرح → روح → طفيلي",
+                    "مسار الأحلام: متجول → ناسج → صانع → سارق → حلم",
+                    "مسار البطاقات: ساحر بطاقات، مستدعي",
+                    "مسار المعدات: صانع الأسلحة والمعدات",
+                    "المسارات الأخرى: الرسم، الخيال، سحر الكلام"
+                ],
+                "النظام العام": [
+                    "كل المسارات تستمد طاقتها من الكيان الكوني الأعلى (مخطوم منذ العصور القديمة)",
+                    "الطاقة موزعة عبر عدة أختام؛ استخدام الطاقة متاح من خلالها دون وعي بالحقيقة الأصلية",
+                    "كل سحر في العالم له نفس المصدر العلوي"
+                ],
+                "المستويات": [
+                    "تقدم تدريجي ضخم (الفرق 99/100 بين الفئات)",
+                    "اختراق الحواجز يتطلب طقوس وتكاليف خاصة",
+                    "المهارات قد تأتي من الدم، من البعد، أو من الجوهر"
+                ],
+                "نظام الجوهر": [
+                    "يخرج من جسد المستيقظ بعد موته",
+                    "يحمل خصلة من حمضه النووي",
+                    "لا يتكرر بنفس الشكل، وكل مرة يتغير",
+                    "يُستهلك وفق شروط صارمة: لا يمكن استهلاك أكثر من جوهر",
+                    "يُصنع منه أدوات، أو يتحول إلى كنوز أو لعنات",
+                    "الوحوش التي تتغذى عليه تتطور"
+                ],
+                "الاستيقاظ": [
+                    "لا يمكن قبل سن 16–17، إلا باستثناءات نادرة",
+                    "يتطلب طقسًا داخل البعد",
+                    "عند النجاح، يُدمج دم الكيان في الجسد",
+                    "نسبة فشل مرتفعة: موت، تشوه، مسخ",
+                    "أبناء المستيقظين يملكون قدرة تكيف أفضل",
+                    "بعض الأبناء يرثون قدرات فطرية"
+                ]
+            },
+            "التنظيمات والجهات الكبرى": {
+                "الكنائس": [
+                    "كنيسة إله القدر (رمزها: فراشة وعنكبوت)",
+                    "تسيطر على الأفراد من خلال طقوس وهياكل سلطوية",
+                    "تستغل وحشًا تعتقد أنه في سبات، لكنه مستيقظ ويسمح لهم عمدًا باستخدام طاقته",
+                    "يخطط لتحويل أجساد مستخدميه إلى طلاسم لتعويذة كونية ضد عدو قديم"
+                ],
+                "الحكومات": [
+                    "تفرض نظام رخصة للمستيقظين",
+                    "من يستخدم قدراته بدون رخصة يُعتبر مجرمًا",
+                    "الهدف الظاهري: حماية الناس، الهدف الحقيقي: السيطرة الكاملة على المواهب"
+                ],
+                "الأسر الكبرى": [
+                    "تحتكر الجواهر",
+                    "تفرض قوانين زواج صارمة",
+                    "تحافظ على نقاء السلالة",
+                    "كل سلالة ذات دم قوي ترفض حمل طاقة معارضة"
+                ]
+            },
+            "القوانين الكونية المعروفة": {
+                "القيود الزمنية والعقلية": [
+                    "لا قدرة على السفر عبر الزمن",
+                    "لا قدرة على التنبؤ بالمستقبل بدقة مطلقة",
+                    "يمكن السيطرة على العقول، لكن لا يمكن قراءة الأفكار أو الذكريات"
+                ],
+                "الموارد والطاقة": [
+                    "المانا تنتجها الأشجار، وتوجد أراضٍ خضراء تتنازع عليها القوى",
+                    "هناك حجارة خاصة تنتج مانا من نوع آخر"
+                ]
+            },
+            "عناصر رمزية وسرية": {
+                "الأدوات والمعرفة": [
+                    "الكتاب/اللوح: موسوعة لعنات وكنوز ومهارات، أوراقه مبعثرة حول العالم",
+                    "المعرفة المحرمة: محظورة من قبل الكنيسة. تشمل حقائق البعد الآخر، الفلسفة، مصدر السحر"
+                ],
+                "الأماكن المهمة": [
+                    "دولة الشرق: تسمح بالمعرفة الحرة، بعكس الدول الأخرى",
+                    "الدانجيون/البعد: يستخدم لاستيقاظ الأفراد، مليء بالمخاطر، البقاء فيه يفسد الروح"
+                ]
+            }
+        };
+        
+        let currentEditPath = null;
+        let currentEditType = null;
+        
+        // عرض المحتوى
+        function renderContent() {
+            const container = document.getElementById('worldContent');
+            container.innerHTML = '';
+            
+            Object.keys(worldData).forEach(sectionKey => {
+                const section = worldData[sectionKey];
+                const sectionElement = createSectionElement(sectionKey, section);
+                container.appendChild(sectionElement);
+            });
+            
+            updateStats();
+        }
+        
+        // إنشاء عنصر قسم
+        function createSectionElement(sectionKey, section) {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'mb-4';
+            
+            const headerId = `section-${sectionKey.replace(/\s+/g, '-')}`;
+            const collapseId = `collapse-${sectionKey.replace(/\s+/g, '-')}`;
+            
+            sectionDiv.innerHTML = `
+                <div class="section-header" data-bs-toggle="collapse" data-bs-target="#${collapseId}">
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                    <h2>${sectionKey}</h2>
+                    <button class="collapse-toggle" onclick="event.stopPropagation()">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="edit-button" onclick="event.stopPropagation(); editSection('${sectionKey}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-button" onclick="event.stopPropagation(); deleteSection('${sectionKey}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="collapse show" id="${collapseId}">
+                    <div class="p-3">
+                        ${createSubsectionsHTML(sectionKey, section)}
+                        <button class="add-button" onclick="addSubsection('${sectionKey}')">
+                            <i class="fas fa-plus"></i> إضافة قسم فرعي
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return sectionDiv;
+        }
+        
+        // إنشاء HTML للأقسام الفرعية
+        function createSubsectionsHTML(sectionKey, section) {
+            let html = '';
+            
+            Object.keys(section).forEach(subsectionKey => {
+                const items = section[subsectionKey];
+                const subsectionId = `subsection-${sectionKey.replace(/\s+/g, '-')}-${subsectionKey.replace(/\s+/g, '-')}`;
+                
+                html += `
+                    <div class="subsection">
+                        <div class="subsection-header" data-bs-toggle="collapse" data-bs-target="#${subsectionId}">
+                            <h4>
+                                <i class="fas fa-chevron-down me-2"></i>
+                                ${subsectionKey}
+                            </h4>
+                            <button class="edit-button" onclick="event.stopPropagation(); editSubsection('${sectionKey}', '${subsectionKey}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-button" onclick="event.stopPropagation(); deleteSubsection('${sectionKey}', '${subsectionKey}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="collapse show" id="${subsectionId}">
+                            <div class="subsection-content">
+                                ${createItemsHTML(sectionKey, subsectionKey, items)}
+                                <button class="add-button" onclick="addItem('${sectionKey}', '${subsectionKey}')">
+                                    <i class="fas fa-plus"></i> إضافة عنصر
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+        
+        // إنشاء HTML للعناصر
+        function createItemsHTML(sectionKey, subsectionKey, items) {
+            let html = '';
+            
+            items.forEach((item, index) => {
+                html += `
+                    <div class="detail-item">
+                        <span class="item-text">${item}</span>
+                        <button class="edit-button" onclick="editItem('${sectionKey}', '${subsectionKey}', ${index})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-button" onclick="deleteItem('${sectionKey}', '${subsectionKey}', ${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+        
+        // إضافة قسم جديد
+        function addNewSection() {
+            const sectionName = prompt('اسم القسم الجديد:');
+            if (sectionName && !worldData[sectionName]) {
+                worldData[sectionName] = {};
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // إضافة قسم فرعي
+        function addSubsection(sectionKey) {
+            const subsectionName = prompt('اسم القسم الفرعي الجديد:');
+            if (subsectionName && !worldData[sectionKey][subsectionName]) {
+                worldData[sectionKey][subsectionName] = [];
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // إضافة عنصر
+        function addItem(sectionKey, subsectionKey) {
+            const itemText = prompt('نص العنصر الجديد:');
+            if (itemText) {
+                worldData[sectionKey][subsectionKey].push(itemText);
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // تعديل قسم
+        function editSection(sectionKey) {
+            const newName = prompt('الاسم الجديد للقسم:', sectionKey);
+            if (newName && newName !== sectionKey) {
+                worldData[newName] = worldData[sectionKey];
+                delete worldData[sectionKey];
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // تعديل قسم فرعي
+        function editSubsection(sectionKey, subsectionKey) {
+            const newName = prompt('الاسم الجديد للقسم الفرعي:', subsectionKey);
+            if (newName && newName !== subsectionKey) {
+                worldData[sectionKey][newName] = worldData[sectionKey][subsectionKey];
+                delete worldData[sectionKey][subsectionKey];
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // تعديل عنصر
+        function editItem(sectionKey, subsectionKey, itemIndex) {
+            currentEditPath = [sectionKey, subsectionKey, itemIndex];
+            currentEditType = 'item';
+            
+            const currentText = worldData[sectionKey][subsectionKey][itemIndex];
+            document.getElementById('editText').value = currentText;
+            document.getElementById('modalTitle').textContent = 'تعديل العنصر';
+            
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        }
+        
+        // حفظ التعديل
+        function saveEdit() {
+            const newText = document.getElementById('editText').value;
+            
+            if (currentEditType === 'item' && currentEditPath) {
+                const [sectionKey, subsectionKey, itemIndex] = currentEditPath;
+                worldData[sectionKey][subsectionKey][itemIndex] = newText;
+                renderContent();
+                saveToStorage();
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+        }
+        
+        // حذف قسم
+        function deleteSection(sectionKey) {
+            if (confirm(`هل أنت متأكد من حذف القسم "${sectionKey}"؟`)) {
+                delete worldData[sectionKey];
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // حذف قسم فرعي
+        function deleteSubsection(sectionKey, subsectionKey) {
+            if (confirm(`هل أنت متأكد من حذف القسم الفرعي "${subsectionKey}"؟`)) {
+                delete worldData[sectionKey][subsectionKey];
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // حذف عنصر
+        function deleteItem(sectionKey, subsectionKey, itemIndex) {
+            if (confirm('هل أنت متأكد من حذف هذا العنصر؟')) {
+                worldData[sectionKey][subsectionKey].splice(itemIndex, 1);
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // البحث في المحتوى
+        function searchContent(query) {
+            const elements = document.querySelectorAll('.item-text, .subsection-header h4, .section-header h2');
+            
+            elements.forEach(element => {
+                const text = element.textContent.toLowerCase();
+                const searchQuery = query.toLowerCase();
+                
+                // إزالة التمييز السابق
+                element.innerHTML = element.innerHTML.replace(/<mark class="highlight">(.*?)<\/mark>/gi, '$1');
+                
+                if (searchQuery && text.includes(searchQuery)) {
+                    // تمييز النص المطابق
+                    const regex = new RegExp(`(${searchQuery})`, 'gi');
+                    element.innerHTML = element.innerHTML.replace(regex, '<mark class="highlight">$1</mark>');
+                    
+                    // إظهار القسم المحتوي على النتيجة
+                    const section = element.closest('.collapse');
+                    if (section && !section.classList.contains('show')) {
+                        bootstrap.Collapse.getOrCreateInstance(section).show();
+                    }
+                }
+            });
+        }
+        
+        // تحديث الإحصائيات
+        function updateStats() {
+            const totalSections = Object.keys(worldData).length;
+            let totalSubsections = 0;
+            let totalItems = 0;
+            
+            Object.values(worldData).forEach(section => {
+                totalSubsections += Object.keys(section).length;
+                Object.values(section).forEach(items => {
+                    totalItems += items.length;
+                });
+            });
+            
+            document.getElementById('totalSections').textContent = totalSections;
+            document.getElementById('totalSubsections').textContent = totalSubsections;
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('lastModified').textContent = new Date().toLocaleDateString('ar-EG');
+        }
+        
+        // حفظ البيانات محليًا
+        function saveToStorage() {
+            try {
+                const dataToSave = {
+                    worldData: worldData,
+                    lastModified: new Date().toISOString()
+                };
+                // استخدام متغير عام بدلاً من localStorage
+                window.novelWorldData = dataToSave;
+            } catch (error) {
+                console.error('خطأ في حفظ البيانات:', error);
+            }
+        }
+        
+        // تحميل البيانات المحفوظة
+        function loadFromStorage() {
+            try {
+                if (window.novelWorldData) {
+                    worldData = window.novelWorldData.worldData || worldData;
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل البيانات:', error);
+            }
+        }
+        
+        // تصدير البيانات
+        function exportData() {
+            try {
+                const dataToExport = {
+                    worldData: worldData,
+                    exportDate: new Date().toISOString(),
+                    version: "1.0"
+                };
+                
+                const dataStr = JSON.stringify(dataToExport, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `novel-world-data-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                URL.revokeObjectURL(link.href);
+            } catch (error) {
+                alert('خطأ في تصدير البيانات: ' + error.message);
+            }
+        }
+        
+        // استيراد البيانات
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+        
+        // معالجة ملف الاستيراد
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (importedData.worldData) {
+                        if (confirm('هل أنت متأكد من استيراد البيانات الجديدة؟ سيتم استبدال البيانات الحالية.')) {
+                            worldData = importedData.worldData;
+                            renderContent();
+                            saveToStorage();
+                            alert('تم استيراد البيانات بنجاح!');
+                        }
+                    } else {
+                        alert('ملف غير صالح!');
+                    }
+                } catch (error) {
+                    alert('خطأ في قراءة الملف: ' + error.message);
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromStorage();
+            renderContent();
+            
+            // ربط وظيفة البحث
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                searchContent(this.value);
+            });
+            
+            // ربط معالج استيراد الملفات
+            document.getElementById('importFile').addEventListener('change', handleImportFile);
+            
+            // معالجة أيقونات التبديل
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.section-header')) {
+                    const header = e.target.closest('.section-header');
+                    const icon = header.querySelector('.toggle-icon');
+                    
+                    setTimeout(() => {
+                        const target = document.querySelector(header.getAttribute('data-bs-target'));
+                        if (target && target.classList.contains('show')) {
+                            header.classList.remove('collapsed');
+                        } else {
+                            header.classList.add('collapsed');
+                        }
+                    }, 100);
+                }
+            });
+            
+            // إعداد tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // حفظ تلقائي كل 30 ثانية
+            setInterval(saveToStorage, 30000);
+        });
+        
+        // معالجة اختصارات لوحة المفاتيح
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + S للحفظ
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveToStorage();
+                alert('تم حفظ البيانات!');
+            }
+            
+            // Ctrl + E للتصدير
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                exportData();
+            }
+            
+            // Ctrl + F للبحث
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+        
+        // وظائف مساعدة إضافية
+        
+        // نسخ قسم
+        function duplicateSection(sectionKey) {
+            const newSectionKey = prompt('اسم القسم المنسوخ:', sectionKey + ' (نسخة)');
+            if (newSectionKey && !worldData[newSectionKey]) {
+                worldData[newSectionKey] = JSON.parse(JSON.stringify(worldData[sectionKey]));
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // نسخ قسم فرعي
+        function duplicateSubsection(sectionKey, subsectionKey) {
+            const newSubsectionKey = prompt('اسم القسم الفرعي المنسوخ:', subsectionKey + ' (نسخة)');
+            if (newSubsectionKey && !worldData[sectionKey][newSubsectionKey]) {
+                worldData[sectionKey][newSubsectionKey] = [...worldData[sectionKey][subsectionKey]];
+                renderContent();
+                saveToStorage();
+            }
+        }
+        
+        // ترتيب الأقسام أبجديًا
+        function sortSections() {
+            const sortedData = {};
+            Object.keys(worldData).sort().forEach(key => {
+                sortedData[key] = worldData[key];
+            });
+            worldData = sortedData;
+            renderContent();
+            saveToStorage();
+        }
+        
+        // إعادة تعيين البيانات
+        function resetData() {
+            if (confirm('هل أنت متأكد من إعادة تعيين جميع البيانات؟ لن يمكن التراجع عن هذا الإجراء!')) {
+                if (confirm('تأكيد أخير - سيتم حذف جميع البيانات نهائيًا!')) {
+                    worldData = {
+                        "قسم تجريبي": {
+                            "قسم فرعي تجريبي": [
+                                "عنصر تجريبي"
+                            ]
+                        }
+                    };
+                    renderContent();
+                    saveToStorage();
+                }
+            }
+        }
+        
+        // طباعة المحتوى
+        function printContent() {
+            const printWindow = window.open('', '_blank');
+            const printContent = document.getElementById('worldContent').cloneNode(true);
+            
+            // إزالة الأزرار من المحتوى المطبوع
+            printContent.querySelectorAll('button').forEach(btn => btn.remove());
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html dir="rtl" lang="ar">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>عالم الرواية - نسخة للطباعة</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .section-header { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; }
+                        .subsection { margin: 15px 0; padding: 10px; border: 1px solid #ddd; }
+                        .detail-item { margin: 8px 0; padding: 8px; background: #f9f9f9; }
+                        h1, h2, h3, h4 { color: #333; }
+                        .collapse { display: block !important; }
+                    </style>
+                </head>
+                <body>
+                    <h1>عالم الرواية - الوثيقة المرجعية</h1>
+                    ${printContent.innerHTML}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.print();
+        }
+    </script>
+</body>
+</html>
