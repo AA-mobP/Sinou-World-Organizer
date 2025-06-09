@@ -538,7 +538,6 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="tableModalTitle">إدارة الجدول</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -722,40 +721,44 @@
         
         // إنشاء HTML للأقسام الفرعية
         function createSubsectionsHTML(sectionKey, section) {
-            let html = '';
+    let html = '';
 
-            Object.keys(section).forEach(subsectionKey => {
-                const items = section[subsectionKey];
-                const subsectionId = `subsection-${sectionKey.replace(/\s+/g, '-')}-${subsectionKey.replace(/\s+/g, '-')}`;
+    Object.keys(section).forEach(subsectionKey => {
+        const items = section[subsectionKey];
 
-                html += `
-                        <div class="subsection">
-                            <div class="subsection-header" data-bs-toggle="collapse" data-bs-target="#${subsectionId}">
-                                <h4>
-                                    <i class="fas fa-chevron-down me-2"></i>
-                                    ${subsectionKey}
-                                </h4>
-                                <button class="edit-button" onclick="event.stopPropagation(); editSubsection('${sectionKey}', '${subsectionKey}')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="delete-button" onclick="event.stopPropagation(); deleteSubsection('${sectionKey}', '${subsectionKey}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                            <div class="collapse show" id="${subsectionId}">
-                                <div class="subsection-content">
-                                    ${createItemsHTML(sectionKey, subsectionKey, items)}
-                                    <button class="add-button" onclick="addItem('${sectionKey}', '${subsectionKey}')">
-                                        <i class="fas fa-plus"></i> إضافة عنصر
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-            });
+        // ✅ تخطي إذا لم تكن مصفوفة
+        if (!Array.isArray(items)) return;
 
-            return html;
-        }
+        const subsectionId = `subsection-${sectionKey.replace(/\s+/g, '-')}-${subsectionKey.replace(/\s+/g, '-')}`;
+
+        html += `
+            <div class="subsection">
+                <div class="subsection-header" data-bs-toggle="collapse" data-bs-target="#${subsectionId}">
+                    <h4>
+                        <i class="fas fa-chevron-down me-2"></i>
+                        ${subsectionKey}
+                    </h4>
+                    <button class="edit-button" onclick="event.stopPropagation(); editSubsection('${sectionKey}', '${subsectionKey}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-button" onclick="event.stopPropagation(); deleteSubsection('${sectionKey}', '${subsectionKey}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="collapse show" id="${subsectionId}">
+                    <div class="subsection-content">
+                        ${createItemsHTML(sectionKey, subsectionKey, items)}
+                        <button class="add-button" onclick="addItem('${sectionKey}', '${subsectionKey}')">
+                            <i class="fas fa-plus"></i> إضافة عنصر
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    return html;
+}
 
         // إنشاء HTML للعناصر
         function createItemsHTML(sectionKey, subsectionKey, items) {
