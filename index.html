@@ -455,6 +455,16 @@
                 </div>
             </div>
 
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    
+                </div>
+                <div class="col-md-4 text-end">
+                   <!-- 1. مؤشر حفظ في الأعلى -->
+                    <div id="saveStatus" class="text-center mb-2 text-success fw-bold">✅ تم الحفظ</div>
+                </div>
+            </div>
+            
             <!-- إحصائيات سريعة -->
             <div class="row mb-4">
                 <div class="col-md-3">
@@ -1495,5 +1505,122 @@
         }
 
     </script>
+
+<!-- 2. إضافة وظائف حفظ واسترجاع عبر REST API -->
+<script>
+    const apiBaseUrl = 'https://chatapp-abdelhady.runasp.net/api/NovelWorldInforamtion';
+    const storyId = 'SinouWorldOrganizer1';
+
+    async function saveDataToApi() {
+        try {
+            showSavingStatus('جاري الحفظ...');
+
+            const response = await fetch(`${apiBaseUrl}/save?storyId=${encodeURIComponent(storyId)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    worldData: worldData,
+                    lastModified: new Date().toISOString()
+                })
+            });
+
+            if (response.ok) {
+                showSavingStatus('✅ تم الحفظ', 'success');
+            } else {
+                throw new Error('فشل في الحفظ');
+            }
+        } catch (error) {
+            showSavingStatus('❌ فشل الحفظ', 'danger');
+            console.error('خطأ في الحفظ:', error);
+        }
+    }
+
+    async function loadDataFromApi() {
+        try {
+            showSavingStatus('📥 جاري تحميل البيانات...');
+
+            const response = await fetch(`${apiBaseUrl}/load?storyId=${encodeURIComponent(storyId)}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.worldData) {
+                    worldData = data.worldData;
+                    showSavingStatus('✅ تم التحميل بنجاح', 'success');
+                }
+            } else {
+                showSavingStatus('⚠️ لم يتم العثور على بيانات محفوظة', 'warning');
+            }
+        } catch (error) {
+            showSavingStatus('❌ فشل في تحميل البيانات', 'danger');
+            console.error('خطأ في تحميل البيانات من API:', error);
+        }
+    }
+
+    function showSavingStatus(message, type = 'info') {
+        const status = document.getElementById('saveStatus');
+        status.textContent = message;
+        status.className = 'text-center mb-2 fw-bold';
+
+        switch(type) {
+            case 'success': status.classList.add('text-success'); break;
+            case 'danger': status.classList.add('text-danger'); break;
+            case 'warning': status.classList.add('text-warning'); break;
+            default: status.classList.add('text-info'); break;
+        }
+    }
+
+    function saveToStorage() {
+        try {
+            window.novelWorldData = {
+                worldData: worldData,
+                lastModified: new Date().toISOString()
+            };
+            saveDataToApi();
+        } catch (error) {
+            console.error('خطأ في الحفظ المحلي:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        await loadDataFromApi();
+        renderContent();
+        setInterval(saveToStorage, 30000); // حفظ تلقائي فقط كل 30 ثانية
+    });
+</script>
+
+<script>
+    function exportToPDF() {
+        const printWindow = window.open('', '_blank');
+        const content = document.getElementById('worldContent').innerHTML;
+        printWindow.document.write(`
+            <html lang="ar" dir="rtl">
+            <head>
+                <title>تصدير إلى PDF</title>
+                <style>body { font-family: sans-serif; margin: 40px; }</style>
+            </head>
+            <body>${content}</body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    function exportToWord() {
+        const header = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+                       'xmlns:w="urn:schemas-microsoft-com:office:word" ' +
+                       'xmlns="http://www.w3.org/TR/REC-html40">';
+        const content = document.getElementById('worldContent').innerHTML;
+        const footer = '</body></html>';
+        const sourceHTML = header + '<body dir="rtl">' + content + footer;
+
+        const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+        const fileDownload = document.createElement("a");
+        fileDownload.href = source;
+        fileDownload.download = `world-export-${new Date().toISOString().split('T')[0]}.doc`;
+        document.body.appendChild(fileDownload);
+        fileDownload.click();
+        document.body.removeChild(fileDownload);
+    }
+</script>
+    
 </body>
 </html>
