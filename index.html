@@ -249,6 +249,178 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(111, 66, 193, 0.3);
         }
+
+        /* إضافات CSS للجداول */
+        .table-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+            .custom-table th {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                font-weight: 600;
+                padding: 12px 8px;
+                text-align: center;
+                border: 1px solid #ddd;
+                position: relative;
+            }
+
+            .custom-table td {
+                padding: 10px 8px;
+                border: 1px solid #ddd;
+                background: #f9f9f9;
+                transition: all 0.3s ease;
+            }
+
+                .custom-table td:hover {
+                    background: #e9ecef;
+                }
+
+                .custom-table td input,
+                .custom-table td textarea {
+                    width: 100%;
+                    border: none;
+                    background: transparent;
+                    padding: 5px;
+                    font-size: 13px;
+                    resize: vertical;
+                    min-height: 20px;
+                }
+
+                    .custom-table td input:focus,
+                    .custom-table td textarea:focus {
+                        outline: 2px solid #667eea;
+                        background: white;
+                        border-radius: 4px;
+                    }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+        }
+
+        .table-title {
+            font-weight: 600;
+            color: #495057;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .table-button {
+            background: linear-gradient(45deg, #17a2b8, #007bff);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+            .table-button:hover {
+                transform: scale(1.05);
+            }
+
+            .table-button.danger {
+                background: linear-gradient(45deg, #dc3545, #c82333);
+            }
+
+            .table-button.success {
+                background: linear-gradient(45deg, #28a745, #20c997);
+            }
+
+        .column-header {
+            position: relative;
+        }
+
+        .column-actions {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            display: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .column-header:hover .column-actions {
+            display: flex;
+        }
+
+        .column-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+            margin: 1px;
+        }
+
+            .column-btn.edit {
+                background: #17a2b8;
+            }
+
+        .row-actions {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+        }
+
+        .row-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+            .row-btn.delete {
+                background: #dc3545;
+            }
+
+        @media (max-width: 768px) {
+            .custom-table {
+                font-size: 12px;
+            }
+
+                .custom-table th,
+                .custom-table td {
+                    padding: 8px 4px;
+                }
+        }
+
     </style>
 </head>
 <body>
@@ -262,11 +434,10 @@
                             منظم عالم الرواية التفاعلي
                         </h1>
                         <p class="lead text-muted">نظام تفاعلي لتنظيم وإدارة عناصر الرواية</p>
-                        <p class="lead text-danger"> بعد إجراء التعديلات اضغط زر "تصدير البيانات" لحفظ التعديلات ثم استيرادها عند بدء جلسة جديدة</p>
                     </div>
                 </div>
             </div>
-            
+
             <!-- شريط الأدوات -->
             <div class="row mb-4">
                 <div class="col-md-8">
@@ -283,7 +454,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- إحصائيات سريعة -->
             <div class="row mb-4">
                 <div class="col-md-3">
@@ -311,10 +482,16 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- محتوى الرواية -->
             <div id="worldContent"></div>
-            
+
+            <div class="text-center mt-4 mb-3">
+                <button class="add-button" onclick="addNewTable()">
+                    <i class="fas fa-table"></i> إضافة جدول جديد
+                </button>
+            </div>
+
             <!-- زر إضافة قسم جديد -->
             <div class="text-center mt-4">
                 <button class="add-button" onclick="addNewSection()">
@@ -323,7 +500,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modal لإضافة/تعديل العناصر -->
     <div class="modal fade" id="editModal" tabindex="-1">
         <div class="modal-dialog">
@@ -345,10 +522,45 @@
             </div>
         </div>
     </div>
+
+    <!-- 3. Modal للجداول - أضف هذا بعد Modal الموجود -->
+    <div class="modal fade" id="tableModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tableModalTitle">إدارة الجدول</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">عنوان الجدول:</label>
+                        <input type="text" id="tableTitle" class="form-control" placeholder="اسم الجدول">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">عدد الأعمدة:</label>
+                        <input type="number" id="tableColumns" class="form-control" min="1" max="10" value="5">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">عدد الصفوف:</label>
+                        <input type="number" id="tableRows" class="form-control" min="1" max="50" value="3">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">عناوين الأعمدة (مفصولة بفاصلة):</label>
+                        <input type="text" id="columnHeaders" class="form-control"
+                               placeholder="الرتبة, التسمية, الخصائص, الاعداد, الارتقاء">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary" onclick="createTable()">إنشاء الجدول</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Input للاستيراد -->
     <input type="file" id="importFile" accept=".json" style="display: none;">
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         // بيانات عالم الرواية
@@ -444,117 +656,118 @@
                 ]
             }
         };
-        
+
         let currentEditPath = null;
         let currentEditType = null;
-        
+
         // عرض المحتوى
         function renderContent() {
             const container = document.getElementById('worldContent');
             container.innerHTML = '';
-            
+
             Object.keys(worldData).forEach(sectionKey => {
                 const section = worldData[sectionKey];
                 const sectionElement = createSectionElement(sectionKey, section);
                 container.appendChild(sectionElement);
             });
-            
+
             updateStats();
         }
-        
+
         // إنشاء عنصر قسم
         function createSectionElement(sectionKey, section) {
             const sectionDiv = document.createElement('div');
             sectionDiv.className = 'mb-4';
-            
+
             const headerId = `section-${sectionKey.replace(/\s+/g, '-')}`;
             const collapseId = `collapse-${sectionKey.replace(/\s+/g, '-')}`;
-            
+
             sectionDiv.innerHTML = `
-                <div class="section-header" data-bs-toggle="collapse" data-bs-target="#${collapseId}">
-                    <i class="fas fa-chevron-down toggle-icon"></i>
-                    <h2>${sectionKey}</h2>
-                    <button class="collapse-toggle" onclick="event.stopPropagation()">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button class="edit-button" onclick="event.stopPropagation(); editSection('${sectionKey}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="delete-button" onclick="event.stopPropagation(); deleteSection('${sectionKey}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-                <div class="collapse show" id="${collapseId}">
-                    <div class="p-3">
-                        ${createSubsectionsHTML(sectionKey, section)}
-                        <button class="add-button" onclick="addSubsection('${sectionKey}')">
-                            <i class="fas fa-plus"></i> إضافة قسم فرعي
+                    <div class="section-header" data-bs-toggle="collapse" data-bs-target="#${collapseId}">
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                        <h2>${sectionKey}</h2>
+                        <button class="collapse-toggle" onclick="event.stopPropagation()">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button class="edit-button" onclick="event.stopPropagation(); editSection('${sectionKey}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-button" onclick="event.stopPropagation(); deleteSection('${sectionKey}')">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
-                </div>
-            `;
-            
+                    <div class="collapse show" id="${collapseId}">
+                        <div class="p-3">
+                            <!--${createSubsectionsHTML(sectionKey, section)}-->
+                            ${createSubsectionsHTMLWithTables(sectionKey, section)}
+                            <button class="add-button" onclick="addSubsection('${sectionKey}')">
+                                <i class="fas fa-plus"></i> إضافة قسم فرعي
+                            </button>
+                        </div>
+                    </div>
+                `;
+
             return sectionDiv;
         }
         
         // إنشاء HTML للأقسام الفرعية
         function createSubsectionsHTML(sectionKey, section) {
             let html = '';
-            
+
             Object.keys(section).forEach(subsectionKey => {
                 const items = section[subsectionKey];
                 const subsectionId = `subsection-${sectionKey.replace(/\s+/g, '-')}-${subsectionKey.replace(/\s+/g, '-')}`;
-                
+
                 html += `
-                    <div class="subsection">
-                        <div class="subsection-header" data-bs-toggle="collapse" data-bs-target="#${subsectionId}">
-                            <h4>
-                                <i class="fas fa-chevron-down me-2"></i>
-                                ${subsectionKey}
-                            </h4>
-                            <button class="edit-button" onclick="event.stopPropagation(); editSubsection('${sectionKey}', '${subsectionKey}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="delete-button" onclick="event.stopPropagation(); deleteSubsection('${sectionKey}', '${subsectionKey}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                        <div class="collapse show" id="${subsectionId}">
-                            <div class="subsection-content">
-                                ${createItemsHTML(sectionKey, subsectionKey, items)}
-                                <button class="add-button" onclick="addItem('${sectionKey}', '${subsectionKey}')">
-                                    <i class="fas fa-plus"></i> إضافة عنصر
+                        <div class="subsection">
+                            <div class="subsection-header" data-bs-toggle="collapse" data-bs-target="#${subsectionId}">
+                                <h4>
+                                    <i class="fas fa-chevron-down me-2"></i>
+                                    ${subsectionKey}
+                                </h4>
+                                <button class="edit-button" onclick="event.stopPropagation(); editSubsection('${sectionKey}', '${subsectionKey}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="delete-button" onclick="event.stopPropagation(); deleteSubsection('${sectionKey}', '${subsectionKey}')">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
+                            <div class="collapse show" id="${subsectionId}">
+                                <div class="subsection-content">
+                                    ${createItemsHTML(sectionKey, subsectionKey, items)}
+                                    <button class="add-button" onclick="addItem('${sectionKey}', '${subsectionKey}')">
+                                        <i class="fas fa-plus"></i> إضافة عنصر
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
             });
-            
+
             return html;
         }
-        
+
         // إنشاء HTML للعناصر
         function createItemsHTML(sectionKey, subsectionKey, items) {
             let html = '';
-            
+
             items.forEach((item, index) => {
                 html += `
-                    <div class="detail-item">
-                        <span class="item-text">${item}</span>
-                        <button class="edit-button" onclick="editItem('${sectionKey}', '${subsectionKey}', ${index})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete-button" onclick="deleteItem('${sectionKey}', '${subsectionKey}', ${index})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
+                        <div class="detail-item">
+                            <span class="item-text">${item}</span>
+                            <button class="edit-button" onclick="editItem('${sectionKey}', '${subsectionKey}', ${index})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-button" onclick="deleteItem('${sectionKey}', '${subsectionKey}', ${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
             });
-            
+
             return html;
         }
-        
+
         // إضافة قسم جديد
         function addNewSection() {
             const sectionName = prompt('اسم القسم الجديد:');
@@ -564,7 +777,7 @@
                 saveToStorage();
             }
         }
-        
+
         // إضافة قسم فرعي
         function addSubsection(sectionKey) {
             const subsectionName = prompt('اسم القسم الفرعي الجديد:');
@@ -574,7 +787,7 @@
                 saveToStorage();
             }
         }
-        
+
         // إضافة عنصر
         function addItem(sectionKey, subsectionKey) {
             const itemText = prompt('نص العنصر الجديد:');
@@ -584,7 +797,7 @@
                 saveToStorage();
             }
         }
-        
+
         // تعديل قسم
         function editSection(sectionKey) {
             const newName = prompt('الاسم الجديد للقسم:', sectionKey);
@@ -595,7 +808,7 @@
                 saveToStorage();
             }
         }
-        
+
         // تعديل قسم فرعي
         function editSubsection(sectionKey, subsectionKey) {
             const newName = prompt('الاسم الجديد للقسم الفرعي:', subsectionKey);
@@ -606,33 +819,33 @@
                 saveToStorage();
             }
         }
-        
+
         // تعديل عنصر
         function editItem(sectionKey, subsectionKey, itemIndex) {
             currentEditPath = [sectionKey, subsectionKey, itemIndex];
             currentEditType = 'item';
-            
+
             const currentText = worldData[sectionKey][subsectionKey][itemIndex];
             document.getElementById('editText').value = currentText;
             document.getElementById('modalTitle').textContent = 'تعديل العنصر';
-            
+
             new bootstrap.Modal(document.getElementById('editModal')).show();
         }
-        
+
         // حفظ التعديل
         function saveEdit() {
             const newText = document.getElementById('editText').value;
-            
+
             if (currentEditType === 'item' && currentEditPath) {
                 const [sectionKey, subsectionKey, itemIndex] = currentEditPath;
                 worldData[sectionKey][subsectionKey][itemIndex] = newText;
                 renderContent();
                 saveToStorage();
             }
-            
+
             bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
         }
-        
+
         // حذف قسم
         function deleteSection(sectionKey) {
             if (confirm(`هل أنت متأكد من حذف القسم "${sectionKey}"؟`)) {
@@ -641,7 +854,7 @@
                 saveToStorage();
             }
         }
-        
+
         // حذف قسم فرعي
         function deleteSubsection(sectionKey, subsectionKey) {
             if (confirm(`هل أنت متأكد من حذف القسم الفرعي "${subsectionKey}"؟`)) {
@@ -650,7 +863,7 @@
                 saveToStorage();
             }
         }
-        
+
         // حذف عنصر
         function deleteItem(sectionKey, subsectionKey, itemIndex) {
             if (confirm('هل أنت متأكد من حذف هذا العنصر؟')) {
@@ -659,23 +872,23 @@
                 saveToStorage();
             }
         }
-        
+
         // البحث في المحتوى
         function searchContent(query) {
             const elements = document.querySelectorAll('.item-text, .subsection-header h4, .section-header h2');
-            
+
             elements.forEach(element => {
                 const text = element.textContent.toLowerCase();
                 const searchQuery = query.toLowerCase();
-                
+
                 // إزالة التمييز السابق
                 element.innerHTML = element.innerHTML.replace(/<mark class="highlight">(.*?)<\/mark>/gi, '$1');
-                
+
                 if (searchQuery && text.includes(searchQuery)) {
                     // تمييز النص المطابق
                     const regex = new RegExp(`(${searchQuery})`, 'gi');
                     element.innerHTML = element.innerHTML.replace(regex, '<mark class="highlight">$1</mark>');
-                    
+
                     // إظهار القسم المحتوي على النتيجة
                     const section = element.closest('.collapse');
                     if (section && !section.classList.contains('show')) {
@@ -684,26 +897,26 @@
                 }
             });
         }
-        
+
         // تحديث الإحصائيات
         function updateStats() {
             const totalSections = Object.keys(worldData).length;
             let totalSubsections = 0;
             let totalItems = 0;
-            
+
             Object.values(worldData).forEach(section => {
                 totalSubsections += Object.keys(section).length;
                 Object.values(section).forEach(items => {
                     totalItems += items.length;
                 });
             });
-            
+
             document.getElementById('totalSections').textContent = totalSections;
             document.getElementById('totalSubsections').textContent = totalSubsections;
             document.getElementById('totalItems').textContent = totalItems;
             document.getElementById('lastModified').textContent = new Date().toLocaleDateString('ar-EG');
         }
-        
+
         // حفظ البيانات محليًا
         function saveToStorage() {
             try {
@@ -717,7 +930,7 @@
                 console.error('خطأ في حفظ البيانات:', error);
             }
         }
-        
+
         // تحميل البيانات المحفوظة
         function loadFromStorage() {
             try {
@@ -728,7 +941,7 @@
                 console.error('خطأ في تحميل البيانات:', error);
             }
         }
-        
+
         // تصدير البيانات
         function exportData() {
             try {
@@ -737,36 +950,36 @@
                     exportDate: new Date().toISOString(),
                     version: "1.0"
                 };
-                
+
                 const dataStr = JSON.stringify(dataToExport, null, 2);
-                const dataBlob = new Blob([dataStr], {type: 'application/json'});
-                
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(dataBlob);
                 link.download = `novel-world-data-${new Date().toISOString().split('T')[0]}.json`;
                 link.click();
-                
+
                 URL.revokeObjectURL(link.href);
             } catch (error) {
                 alert('خطأ في تصدير البيانات: ' + error.message);
             }
         }
-        
+
         // استيراد البيانات
         function importData() {
             document.getElementById('importFile').click();
         }
-        
+
         // معالجة ملف الاستيراد
         function handleImportFile(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
+
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 try {
                     const importedData = JSON.parse(e.target.result);
-                    
+
                     if (importedData.worldData) {
                         if (confirm('هل أنت متأكد من استيراد البيانات الجديدة؟ سيتم استبدال البيانات الحالية.')) {
                             worldData = importedData.worldData;
@@ -781,30 +994,30 @@
                     alert('خطأ في قراءة الملف: ' + error.message);
                 }
             };
-            
+
             reader.readAsText(file);
         }
-        
+
         // تهيئة التطبيق
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadFromStorage();
             renderContent();
-            
+
             // ربط وظيفة البحث
             const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', function() {
+            searchInput.addEventListener('input', function () {
                 searchContent(this.value);
             });
-            
+
             // ربط معالج استيراد الملفات
             document.getElementById('importFile').addEventListener('change', handleImportFile);
-            
+
             // معالجة أيقونات التبديل
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (e.target.closest('.section-header')) {
                     const header = e.target.closest('.section-header');
                     const icon = header.querySelector('.toggle-icon');
-                    
+
                     setTimeout(() => {
                         const target = document.querySelector(header.getAttribute('data-bs-target'));
                         if (target && target.classList.contains('show')) {
@@ -815,41 +1028,41 @@
                     }, 100);
                 }
             });
-            
+
             // إعداد tooltips
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-            
+
             // حفظ تلقائي كل 30 ثانية
             setInterval(saveToStorage, 30000);
         });
-        
+
         // معالجة اختصارات لوحة المفاتيح
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             // Ctrl + S للحفظ
             if (e.ctrlKey && e.key === 's') {
                 e.preventDefault();
                 saveToStorage();
                 alert('تم حفظ البيانات!');
             }
-            
+
             // Ctrl + E للتصدير
             if (e.ctrlKey && e.key === 'e') {
                 e.preventDefault();
                 exportData();
             }
-            
+
             // Ctrl + F للبحث
             if (e.ctrlKey && e.key === 'f') {
                 e.preventDefault();
                 document.getElementById('searchInput').focus();
             }
         });
-        
+
         // وظائف مساعدة إضافية
-        
+
         // نسخ قسم
         function duplicateSection(sectionKey) {
             const newSectionKey = prompt('اسم القسم المنسوخ:', sectionKey + ' (نسخة)');
@@ -859,7 +1072,7 @@
                 saveToStorage();
             }
         }
-        
+
         // نسخ قسم فرعي
         function duplicateSubsection(sectionKey, subsectionKey) {
             const newSubsectionKey = prompt('اسم القسم الفرعي المنسوخ:', subsectionKey + ' (نسخة)');
@@ -869,7 +1082,7 @@
                 saveToStorage();
             }
         }
-        
+
         // ترتيب الأقسام أبجديًا
         function sortSections() {
             const sortedData = {};
@@ -880,7 +1093,7 @@
             renderContent();
             saveToStorage();
         }
-        
+
         // إعادة تعيين البيانات
         function resetData() {
             if (confirm('هل أنت متأكد من إعادة تعيين جميع البيانات؟ لن يمكن التراجع عن هذا الإجراء!')) {
@@ -897,40 +1110,390 @@
                 }
             }
         }
-        
+
         // طباعة المحتوى
         function printContent() {
             const printWindow = window.open('', '_blank');
             const printContent = document.getElementById('worldContent').cloneNode(true);
-            
+
             // إزالة الأزرار من المحتوى المطبوع
             printContent.querySelectorAll('button').forEach(btn => btn.remove());
-            
+
             printWindow.document.write(`
-                <!DOCTYPE html>
-                <html dir="rtl" lang="ar">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>عالم الرواية - نسخة للطباعة</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        .section-header { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; }
-                        .subsection { margin: 15px 0; padding: 10px; border: 1px solid #ddd; }
-                        .detail-item { margin: 8px 0; padding: 8px; background: #f9f9f9; }
-                        h1, h2, h3, h4 { color: #333; }
-                        .collapse { display: block !important; }
-                    </style>
-                </head>
-                <body>
-                    <h1>عالم الرواية - الوثيقة المرجعية</h1>
-                    ${printContent.innerHTML}
-                </body>
-                </html>
-            `);
-            
+                    <!DOCTYPE html>
+                    <html dir="rtl" lang="ar">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>عالم الرواية - نسخة للطباعة</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            .section-header { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 8px; }
+                            .subsection { margin: 15px 0; padding: 10px; border: 1px solid #ddd; }
+                            .detail-item { margin: 8px 0; padding: 8px; background: #f9f9f9; }
+                            h1, h2, h3, h4 { color: #333; }
+                            .collapse { display: block !important; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>عالم الرواية - الوثيقة المرجعية</h1>
+                        ${printContent.innerHTML}
+                    </body>
+                    </html>
+                `);
+
             printWindow.document.close();
             printWindow.print();
         }
+
+        // متغيرات الجداول
+        let currentTableId = null;
+        let tableCounter = 0;
+
+        // إضافة جدول جديد
+        function addNewTable() {
+            currentTableId = null;
+            document.getElementById('tableTitle').value = '';
+            document.getElementById('tableColumns').value = 5;
+            document.getElementById('tableRows').value = 3;
+            document.getElementById('columnHeaders').value = 'الرتبة, التسمية, الخصائص, الاعداد, الارتقاء';
+            document.getElementById('tableModalTitle').textContent = 'إنشاء جدول جديد';
+
+            new bootstrap.Modal(document.getElementById('tableModal')).show();
+        }
+
+        // إنشاء الجدول
+        function createTable() {
+            const title = document.getElementById('tableTitle').value.trim();
+            const columns = parseInt(document.getElementById('tableColumns').value);
+            const rows = parseInt(document.getElementById('tableRows').value);
+            const headers = document.getElementById('columnHeaders').value.split(',').map(h => h.trim());
+
+            if (!title) {
+                alert('يرجى إدخال عنوان الجدول');
+                return;
+            }
+
+            if (headers.length !== columns) {
+                alert(`عدد عناوين الأعمدة (${headers.length}) لا يتطابق مع عدد الأعمدة المحدد (${columns})`);
+                return;
+            }
+
+            // إنشاء بيانات الجدول
+            const tableData = {
+                title: title,
+                headers: headers,
+                rows: []
+            };
+
+            // إنشاء الصفوف الفارغة
+            for (let i = 0; i < rows; i++) {
+                const row = {};
+                headers.forEach(header => {
+                    row[header] = '';
+                });
+                tableData.rows.push(row);
+            }
+
+            // إضافة الجدول إلى البيانات
+            if (!worldData['الجداول']) {
+                worldData['الجداول'] = {};
+            }
+
+            const tableKey = currentTableId || `table_${++tableCounter}`;
+            worldData['الجداول'][tableKey] = tableData;
+
+            renderContent();
+            saveToStorage();
+            bootstrap.Modal.getInstance(document.getElementById('tableModal')).hide();
+        }
+
+        // عرض الجداول في المحتوى
+        function renderTables() {
+            if (!worldData['الجداول']) return '';
+
+            let html = '';
+            Object.keys(worldData['الجداول']).forEach(tableKey => {
+                const table = worldData['الجداول'][tableKey];
+                html += createTableHTML(tableKey, table);
+            });
+
+            return html;
+        }
+
+        // إنشاء HTML للجدول
+        function createTableHTML(tableKey, tableData) {
+            const tableId = `table-${tableKey}`;
+
+            let html = `
+        <div class="table-container" id="${tableId}">
+            <div class="table-header">
+                <h4 class="table-title">${tableData.title}</h4>
+                <div class="table-actions">
+                    <button class="table-button" onclick="editTableTitle('${tableKey}')">
+                        <i class="fas fa-edit"></i> تعديل العنوان
+                    </button>
+                    <button class="table-button success" onclick="addTableRow('${tableKey}')">
+                        <i class="fas fa-plus"></i> إضافة صف
+                    </button>
+                    <button class="table-button" onclick="addTableColumn('${tableKey}')">
+                        <i class="fas fa-columns"></i> إضافة عمود
+                    </button>
+                    <button class="table-button danger" onclick="deleteTable('${tableKey}')">
+                        <i class="fas fa-trash"></i> حذف الجدول
+                    </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+    `;
+
+            // إضافة عناوين الأعمدة
+            tableData.headers.forEach((header, index) => {
+                html += `
+            <th class="column-header">
+                ${header}
+                <div class="column-actions">
+                    <button class="column-btn edit" onclick="editColumnHeader('${tableKey}', ${index})" title="تعديل">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="column-btn" onclick="deleteTableColumn('${tableKey}', ${index})" title="حذف">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </th>
+        `;
+            });
+
+            html += `
+                            <th style="width: 80px;">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
+
+            // إضافة صفوف البيانات
+            tableData.rows.forEach((row, rowIndex) => {
+                html += `<tr>`;
+                html += `<td style="text-align: center; font-weight: bold; background: #e9ecef;">${rowIndex + 1}</td>`;
+
+                tableData.headers.forEach(header => {
+                    html += `
+                <td>
+                    <textarea 
+                        onchange="updateTableCell('${tableKey}', ${rowIndex}, '${header}', this.value)"
+                        placeholder="اكتب هنا..."
+                    >${row[header] || ''}</textarea>
+                </td>
+            `;
+                });
+
+                html += `
+            <td>
+                <div class="row-actions">
+                    <button class="row-btn" onclick="duplicateTableRow('${tableKey}', ${rowIndex})" title="نسخ">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="row-btn delete" onclick="deleteTableRow('${tableKey}', ${rowIndex})" title="حذف">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+            return html;
+        }
+
+        // تحديث خلية في الجدول
+        function updateTableCell(tableKey, rowIndex, header, value) {
+            if (worldData['الجداول'] && worldData['الجداول'][tableKey]) {
+                worldData['الجداول'][tableKey].rows[rowIndex][header] = value;
+                saveToStorage();
+            }
+        }
+
+        // إضافة صف جديد
+        function addTableRow(tableKey) {
+            if (!worldData['الجداول'] || !worldData['الجداول'][tableKey]) return;
+
+            const table = worldData['الجداول'][tableKey];
+            const newRow = {};
+            table.headers.forEach(header => {
+                newRow[header] = '';
+            });
+
+            table.rows.push(newRow);
+            renderContent();
+            saveToStorage();
+        }
+
+        // حذف صف
+        function deleteTableRow(tableKey, rowIndex) {
+            if (!worldData['الجداول'] || !worldData['الجداول'][tableKey]) return;
+
+            if (confirm('هل أنت متأكد من حذف هذا الصف؟')) {
+                worldData['الجداول'][tableKey].rows.splice(rowIndex, 1);
+                renderContent();
+                saveToStorage();
+            }
+        }
+
+        // نسخ صف
+        function duplicateTableRow(tableKey, rowIndex) {
+            if (!worldData['الجداول'] || !worldData['الجداول'][tableKey]) return;
+
+            const table = worldData['الجداول'][tableKey];
+            const rowToCopy = { ...table.rows[rowIndex] };
+            table.rows.splice(rowIndex + 1, 0, rowToCopy);
+            renderContent();
+            saveToStorage();
+        }
+
+        // إضافة عمود جديد
+        function addTableColumn(tableKey) {
+            const columnName = prompt('اسم العمود الجديد:');
+            if (!columnName || !worldData['الجداول'] || !worldData['الجداول'][tableKey]) return;
+
+            const table = worldData['الجداول'][tableKey];
+            table.headers.push(columnName);
+
+            // إضافة العمود الجديد لكل الصفوف
+            table.rows.forEach(row => {
+                row[columnName] = '';
+            });
+
+            renderContent();
+            saveToStorage();
+        }
+
+        // حذف عمود
+        function deleteTableColumn(tableKey, columnIndex) {
+            if (!worldData['الجداول'] || !worldData['الجداول'][tableKey]) return;
+
+            const table = worldData['الجداول'][tableKey];
+            if (table.headers.length <= 1) {
+                alert('لا يمكن حذف آخر عمود في الجدول');
+                return;
+            }
+
+            if (confirm('هل أنت متأكد من حذف هذا العمود؟')) {
+                const headerToDelete = table.headers[columnIndex];
+                table.headers.splice(columnIndex, 1);
+
+                // حذف العمود من كل الصفوف
+                table.rows.forEach(row => {
+                    delete row[headerToDelete];
+                });
+
+                renderContent();
+                saveToStorage();
+            }
+        }
+
+        // تعديل عنوان العمود
+        function editColumnHeader(tableKey, columnIndex) {
+            if (!worldData['الجداول'] || !worldData['الجداول'][tableKey]) return;
+
+            const table = worldData['الجداول'][tableKey];
+            const oldHeader = table.headers[columnIndex];
+            const newHeader = prompt('العنوان الجديد للعمود:', oldHeader);
+
+            if (newHeader && newHeader !== oldHeader) {
+                table.headers[columnIndex] = newHeader;
+
+                // تحديث العنوان في كل الصفوف
+                table.rows.forEach(row => {
+                    row[newHeader] = row[oldHeader];
+                    delete row[oldHeader];
+                });
+
+                renderContent();
+                saveToStorage();
+            }
+        }
+
+        // تعديل عنوان الجدول
+        function editTableTitle(tableKey) {
+            if (!worldData['الجداول'] || !worldData['الجداول'][tableKey]) return;
+
+            const table = worldData['الجداول'][tableKey];
+            const newTitle = prompt('العنوان الجديد للجدول:', table.title);
+
+            if (newTitle && newTitle !== table.title) {
+                table.title = newTitle;
+                renderContent();
+                saveToStorage();
+            }
+        }
+
+        // حذف جدول
+        function deleteTable(tableKey) {
+            if (!worldData['الجداول'] || !worldData['الجداول'][tableKey]) return;
+
+            if (confirm(`هل أنت متأكد من حذف الجدول "${worldData['الجداول'][tableKey].title}"؟`)) {
+                delete worldData['الجداول'][tableKey];
+                renderContent();
+                saveToStorage();
+            }
+        }
+
+        // تعديل دالة createSubsectionsHTML لتشمل الجداول
+        function createSubsectionsHTMLWithTables(sectionKey, section) {
+            let html = '';
+
+            // إذا كان القسم هو "الجداول"، عرض الجداول
+            if (sectionKey === 'الجداول') {
+                Object.keys(section).forEach(tableKey => {
+                    const table = section[tableKey];
+                    html += createTableHTML(tableKey, table);
+                });
+                return html;
+            }
+
+            // وإلا عرض الأقسام العادية
+            Object.keys(section).forEach(subsectionKey => {
+                const items = section[subsectionKey];
+                const subsectionId = `subsection-${sectionKey.replace(/\s+/g, '-')}-${subsectionKey.replace(/\s+/g, '-')}`;
+
+                html += `
+            <div class="subsection">
+                <div class="subsection-header" data-bs-toggle="collapse" data-bs-target="#${subsectionId}">
+                    <h4>
+                        <i class="fas fa-chevron-down me-2"></i>
+                        ${subsectionKey}
+                    </h4>
+                    <button class="edit-button" onclick="event.stopPropagation(); editSubsection('${sectionKey}', '${subsectionKey}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-button" onclick="event.stopPropagation(); deleteSubsection('${sectionKey}', '${subsectionKey}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="collapse show" id="${subsectionId}">
+                    <div class="subsection-content">
+                        ${createItemsHTML(sectionKey, subsectionKey, items)}
+                        <button class="add-button" onclick="addItem('${sectionKey}', '${subsectionKey}')">
+                            <i class="fas fa-plus"></i> إضافة عنصر
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+            });
+
+            return html;
+        }
+
     </script>
 </body>
 </html>
