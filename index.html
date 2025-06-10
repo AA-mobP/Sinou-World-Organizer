@@ -932,10 +932,23 @@
         }
 
         // تحميل البيانات المحفوظة
+        // 1. تحديث دالة loadFromStorage لإعادة تعيين tableCounter
         function loadFromStorage() {
             try {
                 if (window.novelWorldData) {
                     worldData = window.novelWorldData.worldData || worldData;
+
+                    // إعادة تعيين tableCounter بناءً على الجداول الموجودة
+                    if (worldData['الجداول']) {
+                        const tableKeys = Object.keys(worldData['الجداول']);
+                        const maxCounter = Math.max(
+                            0,
+                            ...tableKeys
+                                .filter(key => key.startsWith('table_'))
+                                .map(key => parseInt(key.split('_')[1]) || 0)
+                        );
+                        tableCounter = maxCounter;
+                    }
                 }
             } catch (error) {
                 console.error('خطأ في تحميل البيانات:', error);
@@ -1150,7 +1163,10 @@
         let tableCounter = 0;
 
         // إضافة جدول جديد
+        // 5. تحديث addNewTable لضمان وجود قسم الجداول
         function addNewTable() {
+            ensureTablesSection(); // التأكد من وجود قسم الجداول
+
             currentTableId = null;
             document.getElementById('tableTitle').value = '';
             document.getElementById('tableColumns').value = 5;
@@ -1159,14 +1175,15 @@
             document.getElementById('tableModalTitle').textContent = 'إنشاء جدول جديد';
 
             const modalElement = document.getElementById('tableModal');
-    if (modalElement) {
-        new bootstrap.Modal(modalElement).show();
-    } else {
-        alert('لم يتم العثور على نافذة إنشاء الجدول!');
-    }
+            if (modalElement) {
+                new bootstrap.Modal(modalElement).show();
+            } else {
+                alert('لم يتم العثور على نافذة إنشاء الجدول!');
+            }
         }
 
         // إنشاء الجدول
+        // 2. تحديث دالة createTable لضمان عدم تضارب المفاتيح
         function createTable() {
             const title = document.getElementById('tableTitle').value.trim();
             const columns = parseInt(document.getElementById('tableColumns').value);
@@ -1204,7 +1221,16 @@
                 worldData['الجداول'] = {};
             }
 
-            const tableKey = currentTableId || `table_${++tableCounter}`;
+            // التأكد من عدم تضارب المفاتيح
+            let tableKey;
+            if (currentTableId) {
+                tableKey = currentTableId;
+            } else {
+                do {
+                    tableKey = `table_${++tableCounter}`;
+                } while (worldData['الجداول'][tableKey]);
+            }
+
             worldData['الجداول'][tableKey] = tableData;
 
             renderContent();
@@ -1453,15 +1479,25 @@
         }
 
         // تعديل دالة createSubsectionsHTML لتشمل الجداول
+        // 3. حذف دالة renderTables() غير المستخدمة وتحديث createSubsectionsHTMLWithTables
         function createSubsectionsHTMLWithTables(sectionKey, section) {
             let html = '';
 
             // إذا كان القسم هو "الجداول"، عرض الجداول
             if (sectionKey === 'الجداول') {
-                Object.keys(section).forEach(tableKey => {
-                    const table = section[tableKey];
-                    html += createTableHTML(tableKey, table);
-                });
+                if (Object.keys(section).length === 0) {
+                    html += `
+                <div class="text-center p-4">
+                    <i class="fas fa-table fa-2x text-muted mb-3"></i>
+                    <p class="text-muted">لا توجد جداول بعد. قم بإنشاء جدول جديد للبدء.</p>
+                </div>
+            `;
+                } else {
+                    Object.keys(section).forEach(tableKey => {
+                        const table = section[tableKey];
+                        html += createTableHTML(tableKey, table);
+                    });
+                }
                 return html;
             }
 
@@ -1497,6 +1533,15 @@
             });
 
             return html;
+        }
+
+        // 4. إضافة دالة مساعدة لإنشاء قسم الجداول تلقائياً عند الحاجة
+        function ensureTablesSection() {
+            if (!worldData['الجداول']) {
+                worldData['الجداول'] = {};
+                renderContent();
+                saveToStorage();
+            }
         }
 
     </script>
