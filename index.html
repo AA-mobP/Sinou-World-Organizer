@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظم عالم رواية سينو التفاعلي</title>
+    <title>منظم عالم الرواية التفاعلي</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -657,6 +657,9 @@
             }
         };
 
+        const apiBaseUrl = 'https://chatapp-abdelhady.runasp.net/api/NovelWorldInforamtion';
+        const storyId = 'SinouWorldOrganizer1';
+
         let currentEditPath = null;
         let currentEditType = null;
 
@@ -773,7 +776,7 @@
             if (sectionName && !worldData[sectionName]) {
                 worldData[sectionName] = {};
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -783,7 +786,7 @@
             if (subsectionName && !worldData[sectionKey][subsectionName]) {
                 worldData[sectionKey][subsectionName] = [];
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -793,7 +796,7 @@
             if (itemText) {
                 worldData[sectionKey][subsectionKey].push(itemText);
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -804,7 +807,7 @@
                 worldData[newName] = worldData[sectionKey];
                 delete worldData[sectionKey];
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -815,7 +818,7 @@
                 worldData[sectionKey][newName] = worldData[sectionKey][subsectionKey];
                 delete worldData[sectionKey][subsectionKey];
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -839,7 +842,7 @@
                 const [sectionKey, subsectionKey, itemIndex] = currentEditPath;
                 worldData[sectionKey][subsectionKey][itemIndex] = newText;
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
 
             bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
@@ -850,7 +853,7 @@
             if (confirm(`هل أنت متأكد من حذف القسم "${sectionKey}"؟`)) {
                 delete worldData[sectionKey];
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -859,7 +862,7 @@
             if (confirm(`هل أنت متأكد من حذف القسم الفرعي "${subsectionKey}"؟`)) {
                 delete worldData[sectionKey][subsectionKey];
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -868,7 +871,7 @@
             if (confirm('هل أنت متأكد من حذف هذا العنصر؟')) {
                 worldData[sectionKey][subsectionKey].splice(itemIndex, 1);
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -916,29 +919,83 @@
             document.getElementById('lastModified').textContent = new Date().toLocaleDateString('ar-EG');
         }
 
-        // حفظ البيانات محليًا
-        function saveToStorage() {
+        // حفظ البيانات على الخادم
+        async function saveToStorage() {
             try {
                 const dataToSave = {
                     worldData: worldData,
                     lastModified: new Date().toISOString()
                 };
+
+                // حفظ محلي كنسخة احتياطية
                 localStorage.setItem('novelWorldData', JSON.stringify(dataToSave));
+
+                // حفظ على الخادم
+                const response = await fetch(`${apiBaseUrl}/save?storyId=${storyId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSave)
+                });
+
+                if (!response.ok) {
+                    throw new Error('فشل في حفظ البيانات على الخادم');
+                }
+
+                console.log('تم حفظ البيانات بنجاح');
             } catch (error) {
                 console.error('خطأ في حفظ البيانات:', error);
+                // الاعتماد على الحفظ المحلي في حالة الفشل
             }
         }
 
-        // تحميل البيانات المحفوظة
-        function loadFromStorage() {
+        // تحميل البيانات من الخادم
+        async function loadFromStorage() {
             try {
+                // محاولة التحميل من الخادم أولاً
+                const response = await fetch(`${apiBaseUrl}/load?storyId=${storyId}`);
+
+                if (response.ok) {
+                    const serverData = await response.json();
+                    if (serverData && serverData.worldData) {
+                        worldData = serverData.worldData;
+                        console.log('تم تحميل البيانات من الخادم');
+                        return;
+                    }
+                } else if (response.status === 404) {
+                    console.log('لا توجد بيانات محفوظة على الخادم - أول استخدام');
+                } else {
+                    console.warn('خطأ في الخادم:', response.status);
+                }
+
+                // إذا فشل التحميل من الخادم، استخدم البيانات المحلية
                 const savedData = localStorage.getItem('novelWorldData');
                 if (savedData) {
                     const parsedData = JSON.parse(savedData);
                     worldData = parsedData.worldData || worldData;
+                    console.log('تم تحميل البيانات المحلية');
+                } else {
+                    console.log('استخدام البيانات الافتراضية - أول مرة');
+                    // حفظ البيانات الافتراضية على الخادم للمرة القادمة
+                    saveToStorage();
                 }
             } catch (error) {
                 console.error('خطأ في تحميل البيانات:', error);
+                // استخدام البيانات المحلية كخيار أخير
+                try {
+                    const savedData = localStorage.getItem('novelWorldData');
+                    if (savedData) {
+                        const parsedData = JSON.parse(savedData);
+                        worldData = parsedData.worldData || worldData;
+                        console.log('تم اللجوء للبيانات المحلية');
+                    } else {
+                        console.log('استخدام البيانات الافتراضية بسبب الأخطاء');
+                    }
+                } catch (localError) {
+                    console.error('خطأ في تحميل البيانات المحلية:', localError);
+                    // سيبقى worldData بالقيم الافتراضية
+                }
             }
         }
 
@@ -998,9 +1055,17 @@
             reader.readAsText(file);
         }
 
+        // حفظ فوري بعد التعديلات
+        function saveAfterEdit() {
+            // تأخير صغير للتأكد من اكتمال التعديل
+            setTimeout(() => {
+                saveToStorage();
+            }, 500);
+        }
+
         // تهيئة التطبيق
-        document.addEventListener('DOMContentLoaded', function () {
-            loadFromStorage();
+        document.addEventListener('DOMContentLoaded', async function () {
+            await loadFromStorage();
             renderContent();
 
             // ربط وظيفة البحث
@@ -1034,9 +1099,6 @@
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-
-            // حفظ تلقائي كل 30 ثانية
-            setInterval(saveToStorage, 30000);
         });
 
         // معالجة اختصارات لوحة المفاتيح
@@ -1203,7 +1265,7 @@
             worldData['الجداول'][tableKey] = tableData;
 
             renderContent();
-            saveToStorage();
+            saveAfterEdit();
             bootstrap.Modal.getInstance(document.getElementById('tableModal')).hide();
         }
 
@@ -1318,7 +1380,7 @@
         function updateTableCell(tableKey, rowIndex, header, value) {
             if (worldData['الجداول'] && worldData['الجداول'][tableKey]) {
                 worldData['الجداول'][tableKey].rows[rowIndex][header] = value;
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -1334,7 +1396,7 @@
 
             table.rows.push(newRow);
             renderContent();
-            saveToStorage();
+            saveAfterEdit();
         }
 
         // حذف صف
@@ -1344,7 +1406,7 @@
             if (confirm('هل أنت متأكد من حذف هذا الصف؟')) {
                 worldData['الجداول'][tableKey].rows.splice(rowIndex, 1);
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -1356,7 +1418,7 @@
             const rowToCopy = { ...table.rows[rowIndex] };
             table.rows.splice(rowIndex + 1, 0, rowToCopy);
             renderContent();
-            saveToStorage();
+            saveAfterEdit();
         }
 
         // إضافة عمود جديد
@@ -1373,7 +1435,7 @@
             });
 
             renderContent();
-            saveToStorage();
+            saveAfterEdit();
         }
 
         // حذف عمود
@@ -1396,7 +1458,7 @@
                 });
 
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -1418,7 +1480,7 @@
                 });
 
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -1432,7 +1494,7 @@
             if (newTitle && newTitle !== table.title) {
                 table.title = newTitle;
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
@@ -1443,7 +1505,7 @@
             if (confirm(`هل أنت متأكد من حذف الجدول "${worldData['الجداول'][tableKey].title}"؟`)) {
                 delete worldData['الجداول'][tableKey];
                 renderContent();
-                saveToStorage();
+                saveAfterEdit();
             }
         }
 
